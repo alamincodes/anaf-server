@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
@@ -35,12 +35,18 @@ async function run() {
       const userData = await usersCollection.findOne(query);
       res.send(userData);
     });
+    // delete user
+    app.delete("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await usersCollection.deleteOne(filter);
+      res.send(result);
+    });
   } finally {
     // await client.close();
   }
 }
 run().catch(console.dir);
-
 
 app.get("/", (req, res) => {
   res.send("Anaf server running....");
