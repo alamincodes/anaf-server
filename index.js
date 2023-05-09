@@ -21,6 +21,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const usersCollection = client.db("anaf").collection("users");
+    const ordersCollection = client.db("anaf").collection("orders");
 
     // create user
     app.post("/users", async (req, res) => {
@@ -41,6 +42,18 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const result = await usersCollection.deleteOne(filter);
       res.send(result);
+    });
+    // post orders
+    app.post("/orders", async (req, res) => {
+      const user = req.body;
+      const result = await ordersCollection.insertOne(user);
+      res.send(result);
+    });
+    // get orders
+    app.get("/orders", async (req, res) => {
+      const query = {};
+      const orders = await ordersCollection.find(query).toArray();
+      res.send(orders);
     });
   } finally {
     // await client.close();
