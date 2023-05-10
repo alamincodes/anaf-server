@@ -49,11 +49,25 @@ async function run() {
       const result = await ordersCollection.insertOne(user);
       res.send(result);
     });
-    // get orders
+    // get all orders
     app.get("/orders", async (req, res) => {
       const query = {};
       const orders = await ordersCollection.find(query).toArray();
       res.send(orders);
+    });
+    // get user orders
+    app.get("/order", async (req, res) => {
+      const email = req.query.email;
+      const query = { email };
+      const orders = await ordersCollection.find(query).toArray();
+      res.send(orders);
+    });
+    // get user orders detail
+    app.get("/order/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const orderDetails = await ordersCollection.findOne(query);
+      res.send(orderDetails);
     });
   } finally {
     // await client.close();
