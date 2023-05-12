@@ -38,13 +38,14 @@ async function run() {
   try {
     const usersCollection = client.db("anaf").collection("users");
     const ordersCollection = client.db("anaf").collection("orders");
+    const productsCollection = client.db("anaf").collection("products");
     // verifyAdmin
     const verifyAdmin = async (req, res, next) => {
       const decodedEmail = req.decoded.email;
       const query = { email: decodedEmail };
       const user = await usersCollection.findOne(query);
       if (user?.role !== "admin") {
-        return res.status(403).send({ message: "fobidden access" });
+        return res.status(403).send({ message: "forbidden access" });
       }
       next();
     };
@@ -63,6 +64,19 @@ async function run() {
       }
       res.status(403).send({ accessToken: "" });
     });
+    // get products
+    app.get("/products", async (req, res) => {
+      const query = {};
+      const products = await productsCollection.find(query).toArray();
+      res.send(products);
+    });
+    // add products
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await productsCollection.insertOne(product);
+      res.send(result);
+    });
+
     // create user
     app.post("/users", async (req, res) => {
       const user = req.body;
