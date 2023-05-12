@@ -102,7 +102,7 @@ async function run() {
       res.send(orders);
     });
     // update order status
-    app.put("/order/:id", async (req, res) => {
+    app.put("/order/:id", verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const updateStatus = req.body;
       console.log(updateStatus);
