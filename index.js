@@ -70,6 +70,13 @@ async function run() {
       const products = await productsCollection.find(query).toArray();
       res.send(products);
     });
+    // get single product
+    app.get("/product/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const product = await productsCollection.findOne(query);
+      res.send(product);
+    });
     // add products
     app.post("/products", async (req, res) => {
       const product = req.body;
@@ -167,6 +174,23 @@ async function run() {
       const updatedDoc = {
         $set: {
           role: "admin",
+        },
+      };
+      const result = await usersCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+    // remove admin
+    app.put("/users/cancel/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          role: "normal user",
         },
       };
       const result = await usersCollection.updateOne(
