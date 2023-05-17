@@ -141,6 +141,13 @@ async function run() {
       );
       res.send(result);
     });
+    // delete order
+    app.delete("/deleteOrder/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await ordersCollection.deleteOne(filter);
+      res.send(result)
+    });
     // get user orders
     app.get("/order", verifyJWT, async (req, res) => {
       const email = req.query.email;
@@ -183,8 +190,24 @@ async function run() {
       );
       res.send(result);
     });
+    // update price
+    // app.get("/upPrice", async (req, res) => {
+    //   const filter = {};
+    //   const option = { upsert: true };
+    //   const updateDoc = {
+    //     $set: {
+    //       price: 2099,
+    //     },
+    //   };
+    //   const result = await productsCollection.updateMany(
+    //     filter,
+    //     updateDoc,
+    //     option
+    //   );
+    //   res.send(result);
+    // });
     // remove admin
-    app.put("/users/cancel/:id", async (req, res) => {
+    app.put("/users/cancel/:id", verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
