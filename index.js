@@ -116,6 +116,15 @@ async function run() {
       const result = await ordersCollection.insertOne(user);
       res.send(result);
     });
+
+    // get order
+    app.get("/find/:id",  async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const order = await ordersCollection.findOne(query);
+      res.send(order);
+    });
     // get all orders
     app.get("/orders", verifyJWT, verifyAdmin, async (req, res) => {
       const query = {};
@@ -142,11 +151,11 @@ async function run() {
       res.send(result);
     });
     // delete order
-    app.delete("/deleteOrder/:id", async (req, res) => {
+    app.delete("/deleteOrder/:id", verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const result = await ordersCollection.deleteOne(filter);
-      res.send(result)
+      res.send(result);
     });
     // get user orders
     app.get("/order", verifyJWT, async (req, res) => {
