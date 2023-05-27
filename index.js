@@ -58,7 +58,7 @@ async function run() {
       console.log(user);
       if (user) {
         const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, {
-          expiresIn: "1h",
+          expiresIn: "7d",
         });
         return res.send({ accessToken: token });
       }
@@ -118,7 +118,7 @@ async function run() {
     });
 
     // get order
-    app.get("/find/:id",  async (req, res) => {
+    app.get("/find/:id", async (req, res) => {
       const id = req.params.id;
       console.log(id);
       const query = { _id: new ObjectId(id) };
