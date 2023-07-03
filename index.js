@@ -39,6 +39,10 @@ async function run() {
     const usersCollection = client.db("anaf").collection("users");
     const ordersCollection = client.db("anaf").collection("orders");
     const productsCollection = client.db("anaf").collection("products");
+    // const textIndex = await productsCollection.createIndex({
+    //   a: 1,
+    //   "$**": "text",
+    // });
     // verifyAdmin
     const verifyAdmin = async (req, res, next) => {
       const decodedEmail = req.decoded.email;
@@ -50,6 +54,13 @@ async function run() {
       next();
     };
 
+    app.get("/search", async (req, res) => {
+      const search = req.query.search;
+      console.log(search);
+      const query = { name: { $regex: search, $options: "i" } };
+      const result = await productsCollection.find(query).toArray();
+      res.send(result);
+    });
     // jwt user send token
     app.get("/jwt", async (req, res) => {
       const email = req.query.email;
