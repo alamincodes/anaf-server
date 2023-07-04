@@ -75,6 +75,7 @@ async function run() {
       }
       res.status(403).send({ accessToken: "" });
     });
+
     // get products
     app.get("/products", async (req, res) => {
       const query = {};
@@ -102,7 +103,32 @@ async function run() {
       const result = await productsCollection.insertOne(product);
       res.send(result);
     });
-
+    // update product
+    app.put("/updateProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateProduct = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      console.log(updateProduct);
+      const updateDoc = {
+        $set: {
+          // updateProduct
+          id: updateProduct.id,
+          category: updateProduct.category,
+          name: updateProduct.name,
+          price: updateProduct.price,
+          img: updateProduct.img,
+          detail: updateProduct.detail,
+          outOfStock: updateProduct.outOfStock,
+        },
+      };
+      const result = await productsCollection.updateOne(
+        filter,
+        updateDoc,
+        option
+      );
+      res.send(result);
+    });
     // create user
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -218,13 +244,13 @@ async function run() {
       );
       res.send(result);
     });
-    // update price
-    // app.get("/upPrice", async (req, res) => {
+    // update
+    // app.get("/up", async (req, res) => {
     //   const filter = {};
     //   const option = { upsert: true };
     //   const updateDoc = {
     //     $set: {
-    //       price: 2099,
+    //       outOfStock: "false",
     //     },
     //   };
     //   const result = await productsCollection.updateMany(
